@@ -12,6 +12,7 @@ import java.util.ArrayList;
 
 /**
  * Created by sdevired on 10/29/16.
+ * Backend service to save the tweets to db.
  */
 public class TwitterDBSaveService extends IntentService {
     // Must create a default constructor

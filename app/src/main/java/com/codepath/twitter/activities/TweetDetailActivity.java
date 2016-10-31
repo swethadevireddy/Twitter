@@ -30,8 +30,8 @@ import org.json.JSONObject;
 import cz.msebera.android.httpclient.Header;
 
 /**
- * Created by sdevired on 10/22/16.
- * Activity to sow the embedded webview
+ * Created by sdevired
+ * Activity to show detail view
  */
 public class TweetDetailActivity extends AppCompatActivity implements TweetDialogFragmentPresenter.TweetDialogEvents{
 
@@ -45,25 +45,29 @@ public class TweetDetailActivity extends AppCompatActivity implements TweetDialo
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tweet_detail);
 
+        //data binding
         binding = DataBindingUtil.setContentView(this, R.layout.activity_tweet_detail);
 
         // Sets the Toolbar to act as the ActionBar for this Activity window.
-        // Make sure the toolbar exists in the activity and is not null
         setSupportActionBar(binding.toolbar);
 
         //to display home icon
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         Intent intent = getIntent();
+        //get the tweet
         tweet = intent.getParcelableExtra("tweet");
         ActionBar actionBar = getSupportActionBar();
         //set actionbar title
         if(actionBar != null) {
             actionBar.setTitle("Tweet");
         }
+        //bind tweet , ui can use it directly
         binding.setTweet(tweet);
         binding.setReplyTo("Reply to " + tweet.getUser().getName());
         String screenName = tweet.getUser().getScreenName();
+
+        //register listener on the click of reply tweet , to show charcount and tweet button
         binding.etTweetReply.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -73,7 +77,7 @@ public class TweetDetailActivity extends AppCompatActivity implements TweetDialo
             }
         });
 
-        //register on text change listener
+        //register on text change listener to update charcount and disable button
         binding.etTweetReply.addTextChangedListener(new TextWatcher() {
 
             ColorStateList oldColors;
@@ -106,8 +110,10 @@ public class TweetDetailActivity extends AppCompatActivity implements TweetDialo
 
             }
         });
+        //to resize the view when soft keyboard shows
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE );
         activity = this;
+        //add a presenter to hook up the listeners
         TweetDialogFragmentPresenter presenter = new TweetDialogFragmentPresenter(this);
         binding.setPresenter(presenter);
 
@@ -131,11 +137,15 @@ public class TweetDetailActivity extends AppCompatActivity implements TweetDialo
 
     @Override
     public void cancel() {
-
+        //do nothing(not used for this activity)
     }
 
 
-
+    /**
+     * this method is called on the click of Reply button
+     * check internet availability, if no display error else
+     * call twitter api and save it in db.
+     */
     @Override
     public void tweet() {
         if(InternetCheck.isOnline("api.twitter.com")) {
@@ -145,6 +155,7 @@ public class TweetDetailActivity extends AppCompatActivity implements TweetDialo
                     Tweet t = Tweet.fromJSONObject(response);
                     //save to db
                     t.save();
+                    //hide reply button
                     binding.linearLayoutTweetButton.setVisibility(View.GONE);
                     binding.etTweetReply.setText("");
                     SnackBar.getSnackBarForSuccess("Reply Tweet Posted Successfully !!", activity).show();

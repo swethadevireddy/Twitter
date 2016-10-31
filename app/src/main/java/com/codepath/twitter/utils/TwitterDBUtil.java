@@ -11,6 +11,7 @@ import java.util.ArrayList;
 
 /**
  * Created by sdevired on 10/29/16.
+ * DB util for DAO methods
  */
 public class TwitterDBUtil {
 

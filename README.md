@@ -47,7 +47,7 @@ The following **bonus** features are implemented:
 The following **additional** features are implemented:
 
 * [X] Implemented IntentService to save tweets in background service.
-
+* [X] Used Lambda Expressions
 
 ## Video Walkthrough
 
@@ -63,8 +63,9 @@ Describe any challenges encountered while building the app.
 - [Android Async HTTP] (https://github.com/loopj/android-async-http) - Simple asynchronous HTTP requests with JSON parsing
 - [Picasso] (http://square.github.io/picasso/) - Image loading and caching library for Android
 - [Glide] (http://inthecheesefactory.com/blog/get-to-know-glide-recommended-by-google/en) - Image loading and caching library for Android
-- [Data Binding] (http://guides.codepath.com/android/Reducing-View-Boilerplate-with-Butterknife) - View "Injection" library for Android
+- [Data Binding] (Used Databinding in TweetDetailActivity and TweetDialogFragment to attach events , bind model and view lookup.
 - [Parceler] (http://parceler.org/) - Serialize Java Objects between Contexts
+
 
 ## License
 

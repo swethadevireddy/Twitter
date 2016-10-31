@@ -15,6 +15,7 @@ import org.parceler.Parcel;
 
 /**
  * Created by sdevired on 10/26/16.
+ * model for User
  */
 @Table(database = MyDatabase.class)
 @Parcel(analyze={User.class})

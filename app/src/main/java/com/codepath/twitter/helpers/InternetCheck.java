@@ -8,6 +8,7 @@ import java.io.IOException;
 
 /**
  * Created by sdevired on 10/28/16.
+ * Helper to check Internet availability
  */
 public class InternetCheck {
 

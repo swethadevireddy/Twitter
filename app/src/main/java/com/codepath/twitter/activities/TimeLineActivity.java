@@ -34,6 +34,7 @@ import java.util.ArrayList;
 
 import cz.msebera.android.httpclient.Header;
 
+//Activity to display timeline.
 public class TimeLineActivity extends AppCompatActivity implements TweetDialogFragment.TweetDialogListener {
 
     private TwitterClient twitterClient;
@@ -49,7 +50,6 @@ public class TimeLineActivity extends AppCompatActivity implements TweetDialogFr
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         // Sets the Toolbar to act as the ActionBar for this Activity window.
-        // Make sure the toolbar exists in the activity and is not null
         setSupportActionBar(toolbar);
 
 
@@ -63,26 +63,28 @@ public class TimeLineActivity extends AppCompatActivity implements TweetDialogFr
         LinearLayoutManager layoutManager
                 = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         rvTimeline.setLayoutManager(layoutManager);
+
+        //set dividerItem decoration
         RecyclerView.ItemDecoration itemDecoration = new
                 DividerItemDecoration(this, DividerItemDecoration.VERTICAL_LIST);
         rvTimeline.addItemDecoration(itemDecoration);
 
-
+        //set item click support for detail activity
         ItemClickSupport.addTo(rvTimeline).setOnItemClickListener((recyclerView, position, v) -> {
-        Tweet tweet = tweets.get(position);
-           //code to start a new activity
+            Tweet tweet = tweets.get(position);
+            //code to start a Detail activity
             Intent i = new Intent(getApplicationContext(), TweetDetailActivity.class);
             i.putExtra("tweet", tweet);
             startActivity(i);
-       });
+        });
 
-
-    // Lookup the swipe container view
+        // Lookup the swipe container view
         swipeContainer = (SwipeRefreshLayout) findViewById(R.id.swipeContainer);
         // Setup refresh listener which triggers new data loading
         swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
+                //check internet availability , if not display snackbar else call twitter api
                 if (!InternetCheck.isNetworkAvailable(activity) || !InternetCheck.isOnline("api.twitter.com")) {
                     swipeContainer.setRefreshing(false);
                     SnackBar.getSnackBar("No Internet connection available", activity).show();
@@ -106,23 +108,30 @@ public class TimeLineActivity extends AppCompatActivity implements TweetDialogFr
             }
         });
 
+        //fetch timeline
         populateTimeline(0, 0, InternetCheck.isNetworkAvailable(activity));
 
+        //check if it is Implicit intent
         // Get the intent, verify the action and get the query
         Intent intent = getIntent();
         // Get intent, action and MIME type
         String action = intent.getAction();
         String type = intent.getType();
         if (Intent.ACTION_SEND.equals(action) && type != null) {
-                // Make sure to check whether returned data will be null.
-                String titleOfPage = intent.getStringExtra(Intent.EXTRA_SUBJECT);
-                String urlOfPage = intent.getStringExtra(Intent.EXTRA_TEXT);
-                showTweetDialog(titleOfPage + " " + urlOfPage);
+            String titleOfPage = intent.getStringExtra(Intent.EXTRA_SUBJECT);
+            String urlOfPage = intent.getStringExtra(Intent.EXTRA_TEXT);
+            //show tweet dialog
+            showTweetDialog(titleOfPage + " " + urlOfPage);
         }
-
-
     }
 
+    /**
+     * method to populate timeline, will check for internet availability
+     * populate from db if internet is not available , else calls twitter api
+     * @param totalItemsCount
+     * @param page
+     * @param internetAvailable
+     */
     private void populateTimeline(int totalItemsCount, int page, boolean internetAvailable){
         if(internetAvailable) {
             final long id = (totalItemsCount == 0) ? 0 : tweets.get(totalItemsCount - 1).getId();
@@ -149,7 +158,7 @@ public class TimeLineActivity extends AppCompatActivity implements TweetDialogFr
         }else{
             //get from DB
             ArrayList<Tweet> newTweets = Tweet.getTweets(page);
-            //Display snackbar
+            //Display snackbar if the tweets from db is empty
             if(newTweets == null || newTweets.size() == 0 ){
                 SnackBar.getSnackBar("No Internet connection available", activity).show();
             }else{
@@ -177,6 +186,7 @@ public class TimeLineActivity extends AppCompatActivity implements TweetDialogFr
 
         switch (id){
             case R.id.miTweet:
+                //hide the compose window if internet is not available
                 if (!InternetCheck.isNetworkAvailable(activity)){
                     SnackBar.getSnackBar("No Internet connection available", activity).show();
                 }else {
@@ -191,7 +201,7 @@ public class TimeLineActivity extends AppCompatActivity implements TweetDialogFr
     }
 
     /**
-     * to open Tweet dialog
+     * to open Tweet compose dialog
      */
     public void showTweetDialog(String message){
         FragmentManager fm = getSupportFragmentManager();
@@ -202,6 +212,10 @@ public class TimeLineActivity extends AppCompatActivity implements TweetDialogFr
         settingsDialog.show(fm, "tweet");
     }
 
+    /**
+     * listener method from TweetDialogFragment
+     * @param tweet
+     */
     @Override
     public void onSubmitTweet(Tweet t) {
         tweets.add(0, t);
@@ -210,6 +224,10 @@ public class TimeLineActivity extends AppCompatActivity implements TweetDialogFr
         rvTimeline.smoothScrollToPosition(0);
     }
 
+    /**
+     * notify adapter
+     * @param newTweets
+     */
     private void updateView(ArrayList<Tweet> newTweets){
         int curSize = adapter.getItemCount();
         tweets.addAll(newTweets);

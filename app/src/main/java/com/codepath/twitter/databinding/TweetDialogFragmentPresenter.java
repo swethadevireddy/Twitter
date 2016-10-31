@@ -2,6 +2,7 @@ package com.codepath.twitter.databinding;
 
 /**
  * Created by sdevired on 10/29/16.
+ * class which can be used in ui to call the listeners directly.
  */
 public class TweetDialogFragmentPresenter {
 
@@ -22,6 +23,9 @@ public class TweetDialogFragmentPresenter {
     }
 
 
+    /**
+     * interface to register the listeners
+     */
 
     public interface TweetDialogEvents {
         void cancel() ;

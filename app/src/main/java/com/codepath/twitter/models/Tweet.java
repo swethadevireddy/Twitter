@@ -25,6 +25,7 @@ import java.util.List;
 
 /**
  * Created by sdevired on 10/26/16.
+ * model for Tweet
  */
 @Parcel(analyze={Tweet.class})
 @Table(database = MyDatabase.class)

@@ -9,6 +9,7 @@ import java.util.Date;
 
 /**
  * Created by sdevired on 10/28/16.
+ * DateUtil for formatting dates
  */
 public class DateUtil {
 

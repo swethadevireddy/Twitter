@@ -15,13 +15,13 @@ import java.util.List;
 import jp.wasabeef.glide.transformations.RoundedCornersTransformation;
 
 /**
- * Created by sdevired on 10/20/16.
- * RecyclerView Adapter to populate Article data
+ * Created by sdevired
+ * RecyclerView Adapter to populate Tweets.
  */
 public class TimeLineAdapter extends
         RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    // Store a member variable for the contacts
+    // Store a member variable for the tweets
     private List<Tweet> tweets;
 
     // Pass in the contact array into the constructor
@@ -37,9 +37,9 @@ public class TimeLineAdapter extends
         RecyclerView.ViewHolder viewHolder;
 
         // Inflate the custom layout based on the viewtype
-       View articleView = inflater.inflate(R.layout.item_tweet, parent, false);
-       viewHolder = new TweetViewHolder(articleView);
-       return viewHolder;
+        View articleView = inflater.inflate(R.layout.item_tweet, parent, false);
+        viewHolder = new TweetViewHolder(articleView);
+        return viewHolder;
     }
 
     /**
@@ -52,7 +52,7 @@ public class TimeLineAdapter extends
         // Get the data model based on position
         TweetViewHolder viewHolder = (TweetViewHolder) holder;
         Tweet tweet = tweets.get(position);
-            // Set item views based on your views and data model
+        // Set item views based on your views and data model
         viewHolder.tvText.setText(tweet.getText());
         viewHolder.tvUserName.setText(tweet.getUser().getName());
         viewHolder.tvScreenName.setText(tweet.getUser().getScreenName());
@@ -64,11 +64,7 @@ public class TimeLineAdapter extends
                 .load(tweet.getUser().getProfileImageUrl())
                 .bitmapTransform(new RoundedCornersTransformation(viewHolder.itemView.getContext(),5, 5))
                 .into(viewHolder.ivProfileImage);
-
     }
-
-
-
 
     @Override
     public int getItemCount() {

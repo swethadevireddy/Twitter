@@ -9,7 +9,7 @@ import com.codepath.twitter.R;
 
 /**
  *
- * ViewHolder for text
+ * ViewHolder
  */
 public class TweetViewHolder extends RecyclerView.ViewHolder {
     // for any view that will be set as you render a row
@@ -19,7 +19,7 @@ public class TweetViewHolder extends RecyclerView.ViewHolder {
     public TextView tvScreenName;
     public TextView tvRelativeTime;
 
-       // We also create a constructor that accepts the entire item row
+    // We also create a constructor that accepts the entire item row
     // and does the view lookups to find each subview
     public TweetViewHolder(View itemView) {
         // Stores the itemView in a public final member variable that can be used
@@ -31,5 +31,5 @@ public class TweetViewHolder extends RecyclerView.ViewHolder {
         tvUserName = (TextView) itemView.findViewById(R.id.tvUserName);
         tvScreenName = (TextView) itemView.findViewById(R.id.tvScreenName);
         tvRelativeTime = (TextView) itemView.findViewById(R.id.tvRelativeTime);
-   }
+    }
 }
