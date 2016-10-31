@@ -131,7 +131,7 @@
                         android:id="@+id/btnTweet"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/tweet"
+                        android:text="@string/reply"
                         android:enabled="false"
                         android:backgroundTint="@color/colorAccent"
                         android:onClick="@{() -> presenter.onTweet()}"
