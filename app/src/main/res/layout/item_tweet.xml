@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="5dp"
+    android:layout_marginBottom="5dp"
+    >
+
+    <ImageView
+        android:id="@+id/ivProfileImage"
+        android:layout_width="80dp"
+        android:layout_height="wrap_content"
+        android:adjustViewBounds="true"
+        android:layout_margin="5dp"
+        android:scaleType="fitCenter"
+        />
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_toRightOf="@id/ivProfileImage"
+        android:layout_marginLeft="6dp"
+        >
+
+        <TextView
+            android:id="@+id/tvUserName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="18sp"
+            android:text="@string/user_name"
+            android:textStyle="bold"
+            />
+
+        <TextView
+            android:id="@+id/tvScreenName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="12sp"
+            android:text="@string/screen_name"
+            android:layout_toRightOf="@+id/tvUserName"
+            android:layout_marginLeft="4dp"
+            android:layout_marginTop="5dp" />
+
+        <TextView
+            android:id="@+id/tvRelativeTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="12sp"
+            android:text="@string/relative_time"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="5dp" />
+
+        <TextView
+            android:id="@+id/tvText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="15sp"
+            android:text="@string/tweet_body"
+            android:autoLink="all"
+            android:layout_marginTop="3dp"
+            android:layout_below="@+id/tvUserName"   />
+
+
+    </RelativeLayout>
+</RelativeLayout>

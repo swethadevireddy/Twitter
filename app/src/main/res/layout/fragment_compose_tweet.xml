@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+    <data>
+          <variable name="presenter" type="com.codepath.twitter.databinding.TweetDialogFragmentPresenter"/>
+          <variable name="user" type="com.codepath.twitter.models.User"/>
+    </data>
+
+    <RelativeLayout
+     android:layout_width="wrap_content"
+     android:layout_height="wrap_content"
+     android:layout_gravity="center">
+
+     <ImageButton
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+         android:id="@+id/ibClose"
+         android:layout_marginTop="20dp"
+         android:layout_marginLeft="10dp"
+         android:layout_alignParentLeft="true"
+         android:layout_alignParentStart="true"
+         android:src="@drawable/cancel"
+         android:background="@android:color/transparent"
+         android:tint="@color/colorPrimary"
+         android:onClick="@{() -> presenter.onCancel()}"/>
+
+     <com.makeramen.roundedimageview.RoundedImageView
+         xmlns:app="http://schemas.android.com/apk/res-auto"
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+         android:id="@+id/ivTweetProfileImage"
+         android:layout_marginTop="10dp"
+         android:layout_marginRight="10dp"
+         android:layout_alignParentRight="true"
+         android:layout_alignParentEnd="true"
+         android:src="@mipmap/default_profile"
+         app:riv_corner_radius="10dp"
+         app:imageUrl="@{user.profileImageUrl}"/>
+
+     <TextView
+         android:id="@+id/tvTweetUserName"
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+         android:textSize="18sp"
+         android:text="@{user.name}"
+         android:layout_toLeftOf="@id/ivTweetProfileImage"
+         android:layout_marginRight="5dp"
+         android:textStyle="bold"
+         android:layout_marginTop="10dp"
+     />
+     <TextView
+         android:id="@+id/tvScreenName"
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+         android:textSize="12sp"
+         android:text="@{user.screenName}"
+         android:layout_below="@id/tvTweetUserName"
+         android:layout_toLeftOf="@id/ivTweetProfileImage"
+         android:layout_marginRight="5dp"
+         android:layout_marginTop="2dp" />
+
+    <EditText
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:inputType="textMultiLine"
+        android:id="@+id/etTweet"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="5dp"
+        android:hint="@string/hint_compose"
+        android:lines="5"
+        android:layout_below="@id/ivTweetProfileImage"
+        android:gravity="start"
+        android:layout_marginLeft="10dp"/>
+
+
+     <Button
+         android:layout_width="100dp"
+         android:layout_height="50dp"
+         android:text="@string/tweet"
+         android:layout_below="@id/etTweet"
+         android:id="@+id/btnTweet"
+         android:layout_alignParentRight="true"
+         android:layout_alignParentEnd="true"
+         android:layout_marginRight="5dp"
+         android:layout_marginBottom="5dp"
+         android:layout_marginTop="10dp"
+         android:enabled="false"
+         android:backgroundTint="@color/colorAccent"
+         android:onClick="@{() -> presenter.onTweet()}"
+     />
+
+      <TextView
+            android:id="@+id/tvTweetCharCount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="12sp"
+            android:text="@string/char_count"
+            android:layout_below="@id/etTweet"
+            android:layout_toLeftOf="@id/btnTweet"
+            android:layout_marginRight="5dp"
+            android:layout_marginTop="25dp"
+       />
+
+    </RelativeLayout>
+</layout>
