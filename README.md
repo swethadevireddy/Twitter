@@ -51,7 +51,7 @@ The following **additional** features are implemented:
 
 ## Video Walkthrough
 
-Here's a walkthrough of implemented user stories: http://sendvid.com/7fjjrabx.mp4
+Here's a walkthrough of implemented user stories: http://sendvid.com/5nbyjwpe.mp4
 
 
 ## Notes
