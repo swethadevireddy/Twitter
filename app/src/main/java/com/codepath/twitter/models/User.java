@@ -4,6 +4,8 @@ package com.codepath.twitter.models;
 import android.os.Parcelable;
 
 import com.codepath.twitter.MyDatabase;
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 import com.raizlabs.android.dbflow.annotation.Column;
 import com.raizlabs.android.dbflow.annotation.PrimaryKey;
 import com.raizlabs.android.dbflow.annotation.Table;
@@ -21,16 +23,24 @@ import org.parceler.Parcel;
 @Parcel(analyze={User.class})
 public class User extends BaseModel implements Parcelable{
     @Column
+    @SerializedName("name")
+    @Expose
     private String name;
 
     @PrimaryKey
     @Column
+    @SerializedName("id")
+    @Expose
     long id;
 
     @Column
+    @SerializedName("profile_image_url")
+    @Expose
     String profileImageUrl;
 
     @Column
+    @SerializedName("screen_name")
+    @Expose
     String screenName;
 
 
@@ -64,7 +74,7 @@ public class User extends BaseModel implements Parcelable{
     }
 
     public void setScreenName(String screenName) {
-        this.screenName = screenName;
+        this.screenName = "@"+ screenName;
     }
     public static User fromJSONObject(JSONObject o){
         User u = new User();

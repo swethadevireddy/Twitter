@@ -1,29 +1,58 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context="com.codepath.twitter.activities.TimeLineActivity">
+    android:background="@color/transparent">
 
- <android.support.v7.widget.Toolbar
-     android:id="@+id/toolbar"
-     android:minHeight="?attr/actionBarSize"
-     android:layout_width="match_parent"
-     android:layout_height="wrap_content"
-     android:background="?attr/colorPrimary">
- </android.support.v7.widget.Toolbar>
- <android.support.v4.widget.SwipeRefreshLayout
-     android:id="@+id/swipeContainer"
-     android:layout_below="@id/toolbar"
-     android:layout_width="match_parent"
-     android:layout_height="match_parent">
-  <android.support.v7.widget.RecyclerView
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:scrollbars="vertical"
-      android:layout_alignParentLeft="true"
-      android:layout_alignParentStart="true"
-      android:id="@+id/rvTimeline"/>
- </android.support.v4.widget.SwipeRefreshLayout>
-</RelativeLayout>
+        <android.support.design.widget.AppBarLayout
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <android.support.v7.widget.Toolbar
+                xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:id="@+id/toolbar"
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                app:layout_scrollFlags="scroll|enterAlways"
+                android:minHeight="?attr/actionBarSize"
+                android:background="?attr/colorPrimary"
+                >
+
+            </android.support.v7.widget.Toolbar>
+        </android.support.design.widget.AppBarLayout>
+
+        <!-- Main Content -->
+        <android.support.v4.widget.SwipeRefreshLayout
+            android:id="@+id/swipeContainer"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            >
+            <android.support.v7.widget.RecyclerView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                app:layout_behavior="@string/appbar_scrolling_view_behavior"
+                android:clipToPadding="false"
+                android:paddingTop="?attr/actionBarSize"
+                android:id="@+id/rvTimeline"/>
+        </android.support.v4.widget.SwipeRefreshLayout>
+
+
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="16dp"
+        android:src="@drawable/ic_compose"
+        app:layout_behavior="com.codepath.twitter.utils.ScrollAwareFABBehavior"
+        app:backgroundTint="@color/colorAccent" />
+
+</android.support.design.widget.CoordinatorLayout>

@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 
 import com.bumptech.glide.Glide;
 import com.codepath.twitter.R;
+import com.codepath.twitter.models.Media;
 import com.codepath.twitter.models.Tweet;
 import com.codepath.twitter.utils.DateUtil;
 
@@ -61,10 +62,26 @@ public class TimeLineAdapter extends
         viewHolder.tvRelativeTime.setText(DateUtil.getRelativeTime(tweet.getCreatedAt()));
         //Glide
         Glide.with(viewHolder.itemView.getContext())
-                .load(tweet.getUser().getProfileImageUrl())
-                .bitmapTransform(new RoundedCornersTransformation(viewHolder.itemView.getContext(),5, 5))
+                .load(tweet.getUser().getProfileImageUrl().replace("_normal", "_bigger"))
+                .bitmapTransform(new RoundedCornersTransformation(viewHolder.itemView.getContext(),10, 0))
                 .into(viewHolder.ivProfileImage);
+        viewHolder.ivMediaImage.setImageResource(0);
+
+
+      if(tweet.getExtendedEntities() != null){
+             List<Media> mediaList = tweet.getExtendedEntities().getMedia();
+          for (Media m : mediaList)
+             if("photo".equals(m.getType())){
+                    //Glide
+                    Glide.with(viewHolder.ivMediaImage.getContext()).load(m.getMediaUrl()).bitmapTransform(new RoundedCornersTransformation(viewHolder.ivMediaImage.getContext(), 10, 0,
+                            RoundedCornersTransformation.CornerType.ALL)).into(viewHolder.ivMediaImage);
+                 break;
+             }
+
+        }
+
     }
+
 
     @Override
     public int getItemCount() {

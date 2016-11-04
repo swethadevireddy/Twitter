@@ -3,6 +3,7 @@ package com.codepath.twitter.activities;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -12,6 +13,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.codepath.twitter.R;
 import com.codepath.twitter.adapters.TimeLineAdapter;
@@ -25,12 +27,24 @@ import com.codepath.twitter.listeners.ItemClickSupport;
 import com.codepath.twitter.models.Tweet;
 import com.codepath.twitter.net.TwitterClient;
 import com.codepath.twitter.utils.TwitterDBUtil;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonDeserializer;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParseException;
+import com.google.gson.reflect.TypeToken;
 import com.loopj.android.http.JsonHttpResponseHandler;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.lang.reflect.Type;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.TimeZone;
 
 import cz.msebera.android.httpclient.Header;
 
@@ -43,6 +57,7 @@ public class TimeLineActivity extends AppCompatActivity implements TweetDialogFr
     private TimeLineAdapter adapter;
     private Activity activity;
     private SwipeRefreshLayout swipeContainer;
+    private FloatingActionButton fab;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -50,6 +65,7 @@ public class TimeLineActivity extends AppCompatActivity implements TweetDialogFr
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         // Sets the Toolbar to act as the ActionBar for this Activity window.
+
         setSupportActionBar(toolbar);
 
 
@@ -59,6 +75,7 @@ public class TimeLineActivity extends AppCompatActivity implements TweetDialogFr
         tweets = new ArrayList<>();
         adapter = new TimeLineAdapter(tweets);
         rvTimeline = (RecyclerView)findViewById(R.id.rvTimeline);
+        fab = (FloatingActionButton)findViewById(R.id.fab);
         rvTimeline.setAdapter(adapter);
         LinearLayoutManager layoutManager
                 = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
@@ -123,6 +140,9 @@ public class TimeLineActivity extends AppCompatActivity implements TweetDialogFr
             //show tweet dialog
             showTweetDialog(titleOfPage + " " + urlOfPage);
         }
+
+        setupFloatingActionButton();
+
     }
 
     /**
@@ -143,9 +163,28 @@ public class TimeLineActivity extends AppCompatActivity implements TweetDialogFr
                         adapter.clear();
                     }
                     Log.d("DEBUG", "getHomeTimeLine Success -- " + response.toString());
-                    ArrayList<Tweet> newTweets = Tweet.fromJsonArray(response);
+                    Type listType = new TypeToken<ArrayList<Tweet>>(){}.getType();
+                    GsonBuilder gsonBuilder = new GsonBuilder();
+                    gsonBuilder.registerTypeAdapter(Date.class, new JsonDeserializer<Date>() {
+                        SimpleDateFormat s = new SimpleDateFormat("EEE MMM dd HH:mm:ss ZZZZZ yyyy");
+
+                        @Override
+                        public Date deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+                            try{
+                                s.setTimeZone(TimeZone.getTimeZone("UTC"));
+                                return s.parse(json.getAsString());
+
+                            }
+                            catch(ParseException ex){
+                                return null;
+                            }
+                        }
+                    });
+                    Gson dateGson = gsonBuilder.create();
+                    ArrayList<Tweet> newTweets = dateGson.fromJson(response.toString(), listType);
                     //start service to save data to db
                     TwitterDBUtil.storeTweets(activity, newTweets);
+
                     updateView(newTweets);
                 }
 
@@ -233,6 +272,17 @@ public class TimeLineActivity extends AppCompatActivity implements TweetDialogFr
         tweets.addAll(newTweets);
         adapter.notifyItemRangeInserted(curSize, newTweets.size());
         swipeContainer.setRefreshing(false);
+    }
+
+    private void setupFloatingActionButton() {
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+        /*Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                .setAction("Action", null).show();*/
+                showTweetDialog(null);
+            }
+        });
     }
 }
 

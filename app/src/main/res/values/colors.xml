@@ -4,4 +4,7 @@
         <color name="colorPrimaryDark">#1C6399</color>
         <color name="colorAccent">#55ACEE</color>
         <color name="colorError">#FF0000</color>
+        <color name="transparent">#FFFFFF</color>
+        <color name="defaultText">#606060</color>
+        <color name="screenNameColor">#AAB8C2</color>
 </resources>

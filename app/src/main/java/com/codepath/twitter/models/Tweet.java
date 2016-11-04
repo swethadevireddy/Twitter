@@ -5,6 +5,8 @@ import android.os.Parcelable;
 
 import com.codepath.twitter.MyDatabase;
 import com.codepath.twitter.utils.DateUtil;
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 import com.raizlabs.android.dbflow.annotation.Column;
 import com.raizlabs.android.dbflow.annotation.ForeignKey;
 import com.raizlabs.android.dbflow.annotation.PrimaryKey;
@@ -30,19 +32,55 @@ import java.util.List;
 @Parcel(analyze={Tweet.class})
 @Table(database = MyDatabase.class)
 public class Tweet extends BaseModel implements Parcelable {
+
+    @SerializedName("id")
+    @Expose
     @PrimaryKey
     @Column
     long id;
 
+    @SerializedName("text")
+    @Expose
     @Column
     String text;
 
+    @SerializedName("created_at")
+    @Expose
     @Column
     Date createdAt;
 
+    @SerializedName("user")
+    @Expose
     @Column
     @ForeignKey(saveForeignKeyModel = false)
     User user;
+
+
+    public Entities getEntities() {
+        return entities;
+    }
+
+    public void setEntities(Entities entities) {
+        this.entities = entities;
+    }
+
+    @SerializedName("entities")
+    @Expose
+    Entities entities;
+
+    public ExtendEntities getExtendedEntities() {
+        return extendedEntities;
+    }
+
+    public void setExtendedEntities(ExtendEntities extendedEntities) {
+        this.extendedEntities = extendedEntities;
+    }
+
+
+    @SerializedName("extended_entities")
+    @Expose
+    ExtendEntities extendedEntities;
+
 
 
     public String getRelativeTime() {
@@ -140,6 +178,7 @@ public class Tweet extends BaseModel implements Parcelable {
     public Tweet() {
     }
 
+
     @Override
     public int describeContents() {
         return 0;
@@ -151,6 +190,8 @@ public class Tweet extends BaseModel implements Parcelable {
         dest.writeString(this.text);
         dest.writeLong(this.createdAt != null ? this.createdAt.getTime() : -1);
         dest.writeParcelable(this.user, flags);
+        dest.writeParcelable(this.entities, flags);
+        dest.writeParcelable(this.extendedEntities, flags);
         dest.writeString(this.relativeTime);
     }
 
@@ -160,6 +201,8 @@ public class Tweet extends BaseModel implements Parcelable {
         long tmpCreatedAt = in.readLong();
         this.createdAt = tmpCreatedAt == -1 ? null : new Date(tmpCreatedAt);
         this.user = in.readParcelable(User.class.getClassLoader());
+        this.entities = in.readParcelable(Entities.class.getClassLoader());
+        this.extendedEntities = in.readParcelable(ExtendEntities.class.getClassLoader());
         this.relativeTime = in.readString();
     }
 
