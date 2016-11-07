@@ -9,21 +9,10 @@ import com.codepath.twitter.helpers.InternetCheck;
 import com.codepath.twitter.helpers.SnackBar;
 import com.codepath.twitter.models.SearchResponse;
 import com.codepath.twitter.models.Tweet;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonDeserializationContext;
-import com.google.gson.JsonDeserializer;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParseException;
+import com.codepath.twitter.utils.GSONBuilder;
 import com.loopj.android.http.JsonHttpResponseHandler;
 
 import org.json.JSONObject;
-
-import java.lang.reflect.Type;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.TimeZone;
 
 import cz.msebera.android.httpclient.Header;
 
@@ -84,23 +73,7 @@ public class SearchFragment extends TweetsFragment {
         @Override
         public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
             Log.d("DEBUG", "Success -- " + response.toString());
-            GsonBuilder gsonBuilder = new GsonBuilder();
-            gsonBuilder.registerTypeAdapter(Date.class, new JsonDeserializer<Date>() {
-                SimpleDateFormat s = new SimpleDateFormat("EEE MMM dd HH:mm:ss ZZZZZ yyyy");
-                @Override
-                public Date deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
-                    try{
-                        s.setTimeZone(TimeZone.getTimeZone("UTC"));
-                        return s.parse(json.getAsString());
-
-                    }
-                    catch(ParseException ex){
-                        return null;
-                    }
-                }
-            });
-            Gson gson = gsonBuilder.create();
-            SearchResponse searchResponse = gson.fromJson(response.toString(), com.codepath.twitter.models.SearchResponse.class);
+            SearchResponse searchResponse = GSONBuilder.getGsonWithDate().fromJson(response.toString(), com.codepath.twitter.models.SearchResponse.class);
             //notify adapter
             refreshAdapter(searchResponse.getTweets());
         }

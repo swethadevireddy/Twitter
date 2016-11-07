@@ -17,21 +17,10 @@ import com.codepath.twitter.databinding.TweetDialogFragmentPresenter;
 import com.codepath.twitter.models.Message;
 import com.codepath.twitter.models.User;
 import com.codepath.twitter.net.TwitterClient;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonDeserializationContext;
-import com.google.gson.JsonDeserializer;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParseException;
+import com.codepath.twitter.utils.GSONBuilder;
 import com.loopj.android.http.JsonHttpResponseHandler;
 
 import org.json.JSONObject;
-
-import java.lang.reflect.Type;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.TimeZone;
 
 import cz.msebera.android.httpclient.Header;
 
@@ -135,24 +124,7 @@ public class ComposeMessageFragment extends DialogFragment  implements TweetDial
         client.postMessage(binding.etMessageTo.getText().toString(),  binding.etTweet.getText().toString(), new JsonHttpResponseHandler(){
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-
-                GsonBuilder gsonBuilder = new GsonBuilder();
-                gsonBuilder.registerTypeAdapter(Date.class, new JsonDeserializer<Date>() {
-                    SimpleDateFormat s = new SimpleDateFormat("EEE MMM dd HH:mm:ss ZZZZZ yyyy");
-                    @Override
-                    public Date deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
-                        try{
-                            s.setTimeZone(TimeZone.getTimeZone("UTC"));
-                            return s.parse(json.getAsString());
-
-                        }
-                        catch(ParseException ex){
-                            return null;
-                        }
-                    }
-                });
-                Gson gson = gsonBuilder.create();
-                Message m = gson.fromJson(response.toString(), Message.class);
+                Message m = GSONBuilder.getGsonWithDate().fromJson(response.toString(), Message.class);
                 listener.onMessageSubmit(m);
                 dismiss();
             }
