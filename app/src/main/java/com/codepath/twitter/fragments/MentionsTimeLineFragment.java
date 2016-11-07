@@ -9,7 +9,7 @@ import com.codepath.twitter.models.Tweet;
 /**
  * Created by sdevired on 11/4/16.
  */
-public class MentionsTimelineFragment extends TweetsFragment{
+public class MentionsTimeLineFragment extends TweetsFragment{
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {

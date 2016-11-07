@@ -5,7 +5,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
 import com.codepath.twitter.fragments.HomeTimelineFragment;
-import com.codepath.twitter.fragments.MentionsTimelineFragment;
+import com.codepath.twitter.fragments.MentionsTimeLineFragment;
 
 /**
  * Created by sdevired on 11/4/16.
@@ -23,7 +23,7 @@ public class TweetsPagerAdapter extends FragmentPagerAdapter{
         if(position == 0){
             return new HomeTimelineFragment();
         }else if(position == 1){
-            return new MentionsTimelineFragment();
+            return new MentionsTimeLineFragment();
         }else{
             return null;
         }
