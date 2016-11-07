@@ -262,6 +262,8 @@ public class Tweet extends BaseModel implements Parcelable {
         dest.writeLong(this.createdAt != null ? this.createdAt.getTime() : -1);
         dest.writeParcelable(this.user, flags);
         dest.writeString(this.type);
+        dest.writeParcelable(this.entities, flags);
+        dest.writeParcelable(this.extendedEntities, flags);
         dest.writeByte(this.retweeted ? (byte) 1 : (byte) 0);
         dest.writeValue(this.reTweetCount);
         dest.writeByte(this.favorited ? (byte) 1 : (byte) 0);
@@ -276,6 +278,8 @@ public class Tweet extends BaseModel implements Parcelable {
         this.createdAt = tmpCreatedAt == -1 ? null : new Date(tmpCreatedAt);
         this.user = in.readParcelable(User.class.getClassLoader());
         this.type = in.readString();
+        this.entities = in.readParcelable(Entities.class.getClassLoader());
+        this.extendedEntities = in.readParcelable(ExtendEntities.class.getClassLoader());
         this.retweeted = in.readByte() != 0;
         this.reTweetCount = (Long) in.readValue(Long.class.getClassLoader());
         this.favorited = in.readByte() != 0;

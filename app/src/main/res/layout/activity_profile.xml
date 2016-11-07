@@ -11,11 +11,10 @@
         android:layout_height="match_parent">
 
     <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/ivProfileBackground"
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
         android:adjustViewBounds="true"
-        app:imageUrl="@{user.profileBackgroundUrl}"/>
+        android:id="@+id/ivProfileBackground" />
     />
     <ImageView
         android:id="@+id/ivProfileImage"
@@ -24,7 +23,7 @@
         android:layout_marginBottom="7dp"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="7dp"
-        android:layout_marginTop="85dp"
+        android:layout_marginTop="125dp"
         tools:src="@mipmap/default_profile"
         app:imageUrl="@{user.profileImageUrl}"/>
 

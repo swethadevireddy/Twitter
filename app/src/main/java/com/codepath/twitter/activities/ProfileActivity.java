@@ -12,6 +12,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.codepath.twitter.R;
 import com.codepath.twitter.application.TwitterApplication;
 import com.codepath.twitter.databinding.ActivityProfileBinding;
@@ -48,7 +49,7 @@ public class ProfileActivity extends AppCompatActivity implements OnProgressList
 
         screenName = getIntent().getStringExtra("screen_name");
 
-        //call profile
+
         TwitterClient client = TwitterApplication.getRestClient();
 
         //call api
@@ -71,6 +72,7 @@ public class ProfileActivity extends AppCompatActivity implements OnProgressList
         binding.tvFollowers.setTag("Followers");
 
 
+
     }
 
     //create getTweetsResponseHandler
@@ -83,6 +85,16 @@ public class ProfileActivity extends AppCompatActivity implements OnProgressList
             User user = gson.fromJson(response.toString(), User.class);
             binding.setUser(user);
             setHeaders(user);
+            if(user.getProfileBackgroundUrl() == null) {
+                binding.ivProfileBackground.setBackgroundColor(getResources().getColor(R.color.colorAccent));
+            }else{
+                binding.ivProfileBackground.setBackgroundResource(android.R.color.transparent);
+                Glide.with( binding.ivProfileBackground.getContext())
+                        .load(user.getProfileBackgroundUrl())
+                        .centerCrop().into(binding.ivProfileBackground);
+
+            }
+
         }
 
         @Override
