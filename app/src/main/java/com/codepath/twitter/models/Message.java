@@ -9,9 +9,6 @@ import org.parceler.Parcel;
 
 import java.util.Date;
 
-/**
- * Created by Shyam Rokde on 2/27/16.
- */
 @Parcel
 public class Message implements Parcelable {
 
