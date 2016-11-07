@@ -101,11 +101,18 @@ public class TimeLineAdapter extends
         viewHolder.tvRelativeTime.setText(DateUtil.getRelativeTime(tweet.getCreatedAt()));
 
         viewHolder.ivProfileImage.setTag(viewHolder.ivProfileImage.getId(), tweet.getUser().getScreenName());
-        if(tweet.getFavoriteCount() != null &&  tweet.getFavoriteCount() != 0) {
+        if(tweet.getFavoriteCount() != null) {
             viewHolder.tvFavoriteCount.setText(tweet.getFavoriteCount().toString());
         }
-        if(tweet.getReTweetCount() != null && tweet.getReTweetCount() != 0 ) {
+        if("0".equals(viewHolder.tvFavoriteCount.getText().toString())){
+            viewHolder.tvFavoriteCount.setText("");
+        }
+        if(tweet.getReTweetCount() != null) {
             viewHolder.tvRetweetCount.setText(tweet.getReTweetCount().toString());
+        }
+
+        if("0".equals(viewHolder.tvRetweetCount.getText().toString())){
+            viewHolder.tvRetweetCount.setText("");
         }
 
         if(tweet.isFavorited()){

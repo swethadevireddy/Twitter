@@ -31,6 +31,7 @@ import com.codepath.twitter.models.Media;
 import com.codepath.twitter.models.Tweet;
 import com.codepath.twitter.models.Variant;
 import com.codepath.twitter.net.TwitterClient;
+import com.codepath.twitter.utils.GSONBuilder;
 import com.loopj.android.http.JsonHttpResponseHandler;
 
 import org.json.JSONObject;
@@ -215,7 +216,7 @@ public class TweetDetailActivity extends AppCompatActivity implements TweetDialo
             client.postTweet(new JsonHttpResponseHandler() {
                 @Override
                 public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                    Tweet t = Tweet.fromJSONObject(response);
+                    Tweet t = GSONBuilder.getGsonWithDate().fromJson(response.toString(), Tweet.class);
                     //save to db
                     t.save();
                     //hide reply button

@@ -24,6 +24,7 @@ import com.codepath.twitter.databinding.TweetDialogFragmentPresenter;
 import com.codepath.twitter.models.Tweet;
 import com.codepath.twitter.models.User;
 import com.codepath.twitter.net.TwitterClient;
+import com.codepath.twitter.utils.GSONBuilder;
 import com.loopj.android.http.JsonHttpResponseHandler;
 
 import org.json.JSONObject;
@@ -213,7 +214,7 @@ public class TweetDialogFragment extends DialogFragment  implements TweetDialogF
                 SharedPreferences.Editor edit = pref.edit();
                 edit.remove(SAVE_TWEET_NAME);
                 edit.commit();
-                Tweet t =  Tweet.fromJSONObject(response);
+                Tweet t = GSONBuilder.getGsonWithDate().fromJson(response.toString(), Tweet.class);
                 listener.onSubmitTweet(t);
                 dismiss();
             }
