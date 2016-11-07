@@ -19,14 +19,17 @@ public class InternetCheck {
         return activeNetworkInfo != null && activeNetworkInfo.isConnectedOrConnecting();
     }
 
-    public static boolean isOnline(String domain) {
+    public static boolean isOnline() {
         Runtime runtime = Runtime.getRuntime();
         try {
-            Process ipProcess = runtime.exec("/system/bin/ping -c 1 " + domain);
+            Process ipProcess = runtime.exec("/system/bin/ping -c 1 " + TWITTER_DOMAIN);
             int     exitValue = ipProcess.waitFor();
             return (exitValue == 0);
         } catch (IOException e)          { e.printStackTrace(); }
         catch (InterruptedException e) { e.printStackTrace(); }
         return false;
     }
+
+    public static final String TWITTER_DOMAIN = "api.twitter.com";
+    public static final String NO_INTERNET = "No Internet connection available";
 }

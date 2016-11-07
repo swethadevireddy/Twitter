@@ -58,7 +58,7 @@ dependencies {
     //for Recyclerview
     compile 'com.android.support:recyclerview-v7:24.2.0'
     //glide
-    compile 'com.github.bumptech.glide:glide:3.5.2'
+    compile 'com.github.bumptech.glide:glide:3.6.0'
     compile 'jp.wasabeef:glide-transformations:2.0.1'
     //design support library for snackbar
     compile "com.android.support:design:24.2.0"
@@ -78,6 +78,5 @@ dependencies {
     compile 'com.github.hotchemi:permissionsdispatcher:2.2.0'
     apt 'com.github.hotchemi:permissionsdispatcher-processor:2.2.0'
 
-
-
+    compile 'com.astuetz:pagerslidingtabstrip:1.0.1'
 }

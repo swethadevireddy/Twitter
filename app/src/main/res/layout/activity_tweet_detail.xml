@@ -7,26 +7,14 @@
         <variable name="tweet" type="com.codepath.twitter.models.Tweet"/>
         <variable name="replyTo" type="java.lang.String"/>
         <variable name="presenter" type="com.codepath.twitter.databinding.TweetDialogFragmentPresenter"/>
+        <variable name="screenName" type="java.lang.String"/>
     </data>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
         >
-        <android.support.design.widget.AppBarLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-            <android.support.v7.widget.Toolbar
-                android:id="@+id/toolbar"
-                android:minHeight="?attr/actionBarSize"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:theme="@style/ToolbarColoredBackArrow"
-                app:popupTheme="@style/AppTheme"
-                android:background="?attr/colorPrimary">
-            </android.support.v7.widget.Toolbar>
-        </android.support.design.widget.AppBarLayout>
-
+       <include android:id="@+id/tbInclude"  layout="@layout/toolbar_secondary"/>
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -75,7 +63,7 @@
                     android:paddingTop="2dp"
                     android:textColor="@color/screenNameColor"
                     android:textSize="17sp"
-                    tools:text="@{tweet.user.screenName}" />
+                    tools:text="@{screenName}" />
 
                 <TextView
                     android:id="@+id/tvText"
@@ -150,7 +138,8 @@
                     android:layout_alignParentLeft="true"
                     android:text="@{tweet.createdAt.toLocaleString()}"
                     android:layout_below="@id/primerdivisor0"
-                    android:paddingBottom="10dp"
+                    android:paddingTop="5dp"
+                    android:paddingBottom="5dp"
                     android:textColor="#B0B0B0"
                     tools:text="1 min ago" />
 

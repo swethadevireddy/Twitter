@@ -1,133 +1,53 @@
 package com.codepath.twitter.activities;
 
-import android.app.Activity;
 import android.content.Intent;
+import android.databinding.DataBindingUtil;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
-import android.util.Log;
+import android.support.v7.widget.SearchView;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 
 import com.codepath.twitter.R;
-import com.codepath.twitter.adapters.TimeLineAdapter;
-import com.codepath.twitter.application.TwitterApplication;
+import com.codepath.twitter.adapters.TweetsPagerAdapter;
+import com.codepath.twitter.databinding.ActivityTimeLineBinding;
 import com.codepath.twitter.fragments.TweetDialogFragment;
-import com.codepath.twitter.helpers.DividerItemDecoration;
+import com.codepath.twitter.fragments.TweetsFragment;
 import com.codepath.twitter.helpers.InternetCheck;
 import com.codepath.twitter.helpers.SnackBar;
-import com.codepath.twitter.listeners.EndlessRecyclerViewScrollListener;
-import com.codepath.twitter.listeners.ItemClickSupport;
+import com.codepath.twitter.listeners.OnProgressListener;
 import com.codepath.twitter.models.Tweet;
-import com.codepath.twitter.net.TwitterClient;
-import com.codepath.twitter.utils.TwitterDBUtil;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonDeserializationContext;
-import com.google.gson.JsonDeserializer;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParseException;
-import com.google.gson.reflect.TypeToken;
-import com.loopj.android.http.JsonHttpResponseHandler;
-
-import org.json.JSONArray;
-import org.json.JSONObject;
-
-import java.lang.reflect.Type;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.TimeZone;
-
-import cz.msebera.android.httpclient.Header;
 
 //Activity to display timeline.
-public class TimeLineActivity extends AppCompatActivity implements TweetDialogFragment.TweetDialogListener {
+public class TimeLineActivity extends AppCompatActivity implements TweetDialogFragment.TweetDialogListener, OnProgressListener{
 
-    private TwitterClient twitterClient;
-    private ArrayList<Tweet> tweets;
-    private RecyclerView rvTimeline;
-    private TimeLineAdapter adapter;
-    private Activity activity;
-    private SwipeRefreshLayout swipeContainer;
-    private FloatingActionButton fab;
+    private ActivityTimeLineBinding binding;
+    private TweetsPagerAdapter pagerAdapter;
+    MenuItem miActionProgressItem;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_time_line);
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_time_line);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setContentView(binding.getRoot());
+
         // Sets the Toolbar to act as the ActionBar for this Activity window.
+        setSupportActionBar(binding.tbInclude.toolbar);
 
-        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
 
 
-        activity = this;
+        //setup floating button
+        setupFloatingActionButton();
 
-        twitterClient = TwitterApplication.getRestClient();
-        tweets = new ArrayList<>();
-        adapter = new TimeLineAdapter(tweets);
-        rvTimeline = (RecyclerView)findViewById(R.id.rvTimeline);
-        fab = (FloatingActionButton)findViewById(R.id.fab);
-        rvTimeline.setAdapter(adapter);
-        LinearLayoutManager layoutManager
-                = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
-        rvTimeline.setLayoutManager(layoutManager);
+        pagerAdapter = new TweetsPagerAdapter(getSupportFragmentManager());
 
-        //set dividerItem decoration
-        RecyclerView.ItemDecoration itemDecoration = new
-                DividerItemDecoration(this, DividerItemDecoration.VERTICAL_LIST);
-        rvTimeline.addItemDecoration(itemDecoration);
-
-        //set item click support for detail activity
-        ItemClickSupport.addTo(rvTimeline).setOnItemClickListener((recyclerView, position, v) -> {
-            Tweet tweet = tweets.get(position);
-            //code to start a Detail activity
-            Intent i = new Intent(getApplicationContext(), TweetDetailActivity.class);
-            i.putExtra("tweet", tweet);
-            startActivity(i);
-        });
-
-        // Lookup the swipe container view
-        swipeContainer = (SwipeRefreshLayout) findViewById(R.id.swipeContainer);
-        // Setup refresh listener which triggers new data loading
-        swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                //check internet availability , if not display snackbar else call twitter api
-                if (!InternetCheck.isNetworkAvailable(activity) || !InternetCheck.isOnline("api.twitter.com")) {
-                    swipeContainer.setRefreshing(false);
-                    SnackBar.getSnackBar("No Internet connection available", activity).show();
-
-                } else {
-                    populateTimeline(0, 0, true);
-                }
-            }
-        });
-
-        // Configure the refreshing colors
-        swipeContainer.setColorSchemeResources(R.color.colorAccent);
-
-        //infinite scrolling
-        rvTimeline.addOnScrollListener(new EndlessRecyclerViewScrollListener(layoutManager) {
-            @Override
-            public void onLoadMore(int page, int totalItemsCount) {
-                // Triggered only when new data needs to be appended to the list
-                // Add whatever code is needed to append new items to the bottom of the list
-                populateTimeline(totalItemsCount, page, InternetCheck.isNetworkAvailable(activity));
-            }
-        });
-
-        //fetch timeline
-        populateTimeline(0, 0, InternetCheck.isNetworkAvailable(activity));
-
+        binding.contentInclude.viewpager.setAdapter(pagerAdapter);
+        binding.contentInclude.tabs.setViewPager(binding.contentInclude.viewpager);
         //check if it is Implicit intent
         // Get the intent, verify the action and get the query
         Intent intent = getIntent();
@@ -140,74 +60,6 @@ public class TimeLineActivity extends AppCompatActivity implements TweetDialogFr
             //show tweet dialog
             showTweetDialog(titleOfPage + " " + urlOfPage);
         }
-
-        setupFloatingActionButton();
-
-    }
-
-    /**
-     * method to populate timeline, will check for internet availability
-     * populate from db if internet is not available , else calls twitter api
-     * @param totalItemsCount
-     * @param page
-     * @param internetAvailable
-     */
-    private void populateTimeline(int totalItemsCount, int page, boolean internetAvailable){
-        if(internetAvailable) {
-            final long id = (totalItemsCount == 0) ? 0 : tweets.get(totalItemsCount - 1).getId();
-            twitterClient.getHomeTimeLine(id, new JsonHttpResponseHandler() {
-                @Override
-                public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
-                    if (id == 0) {
-                        //clear the adapter
-                        adapter.clear();
-                    }
-                    Log.d("DEBUG", "getHomeTimeLine Success -- " + response.toString());
-                    Type listType = new TypeToken<ArrayList<Tweet>>(){}.getType();
-                    GsonBuilder gsonBuilder = new GsonBuilder();
-                    gsonBuilder.registerTypeAdapter(Date.class, new JsonDeserializer<Date>() {
-                        SimpleDateFormat s = new SimpleDateFormat("EEE MMM dd HH:mm:ss ZZZZZ yyyy");
-
-                        @Override
-                        public Date deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
-                            try{
-                                s.setTimeZone(TimeZone.getTimeZone("UTC"));
-                                return s.parse(json.getAsString());
-
-                            }
-                            catch(ParseException ex){
-                                return null;
-                            }
-                        }
-                    });
-                    Gson dateGson = gsonBuilder.create();
-                    ArrayList<Tweet> newTweets = dateGson.fromJson(response.toString(), listType);
-                    //start service to save data to db
-                    TwitterDBUtil.storeTweets(activity, newTweets);
-
-                    updateView(newTweets);
-                }
-
-                @Override
-                public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-                    Log.d("DEBUG", "getHomeTimeLine Failed -- " + errorResponse);
-                }
-
-            });
-        }else{
-            //get from DB
-            ArrayList<Tweet> newTweets = Tweet.getTweets(page);
-            //Display snackbar if the tweets from db is empty
-            if(newTweets == null || newTweets.size() == 0 ){
-                SnackBar.getSnackBar("No Internet connection available", activity).show();
-            }else{
-                if (page == 0) {
-                    //clear the adapter
-                    adapter.clear();
-                }
-                updateView(newTweets);
-            }
-        }
     }
 
     // Menu icons are inflated just as they were with actionbar
@@ -215,28 +67,60 @@ public class TimeLineActivity extends AppCompatActivity implements TweetDialogFr
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_timeline, menu);
-        return true;
+
+        MenuItem searchItem = menu.findItem(R.id.miSearch);
+        final SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                //open intent
+                Intent i = new Intent(getApplicationContext(), TweetSearchActivity.class);
+                i.putExtra("query", query);
+                startActivity(i);
+                searchView.clearFocus();
+                return true;
+            }
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                return false;
+            }
+        });
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        // Store instance of the menu item containing progress
+        miActionProgressItem = menu.findItem(R.id.miActionProgress);
+             // Return to finish
+        return super.onPrepareOptionsMenu(menu);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
         int id = item.getItemId();
+        if (!InternetCheck.isOnline()){
+            SnackBar.getSnackBar("No Internet connection available", getParent()).show();
+            return true;
+        }
 
         switch (id){
             case R.id.miTweet:
-                //hide the compose window if internet is not available
-                if (!InternetCheck.isNetworkAvailable(activity)){
-                    SnackBar.getSnackBar("No Internet connection available", activity).show();
-                }else {
-                    //open tweet dialog
-                    showTweetDialog(null);
-                }
+                //open tweet dialog
+                showTweetDialog(null);
+                return true;
+            case R.id.miProfile:
+                //open tweet dialog
+                showProfile();
+                return true;
+            case R.id.miMesssage:
+                //show Message activity
+                showMessageActivity();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
-
     }
 
     /**
@@ -252,38 +136,54 @@ public class TimeLineActivity extends AppCompatActivity implements TweetDialogFr
     }
 
     /**
-     * listener method from TweetDialogFragment
-     * @param tweet
+     * to open Tweet compose dialog
      */
-    @Override
-    public void onSubmitTweet(Tweet t) {
-        tweets.add(0, t);
-        adapter.notifyItemInserted(0);
-        //set scroll position to top.
-        rvTimeline.smoothScrollToPosition(0);
+    public void showProfile(){
+        Intent i = new Intent(this, ProfileActivity.class);
+        startActivity(i);
+    }
+
+
+
+
+    private void setupFloatingActionButton() {
+        binding.fab.setOnClickListener(view -> showTweetDialog(null));
     }
 
     /**
-     * notify adapter
-     * @param newTweets
+     * listener method from TweetDialogFragment
+     * @param t(Tweet)
      */
-    private void updateView(ArrayList<Tweet> newTweets){
-        int curSize = adapter.getItemCount();
-        tweets.addAll(newTweets);
-        adapter.notifyItemRangeInserted(curSize, newTweets.size());
-        swipeContainer.setRefreshing(false);
+    @Override
+    public void onSubmitTweet(Tweet t) {
+        //TODO check flow from browser sharing
+        binding.contentInclude.viewpager.setCurrentItem(0);
+        TweetsFragment fragment = (TweetsFragment) getSupportFragmentManager().getFragments().get(0);
+        fragment.newTweet(t);
     }
 
-    private void setupFloatingActionButton() {
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-        /*Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                .setAction("Action", null).show();*/
-                showTweetDialog(null);
-            }
-        });
+    @Override
+    public void showProgressBar() {
+        // Show progress item
+        if(miActionProgressItem != null) {
+            miActionProgressItem.setVisible(true);
+        }
     }
+
+    @Override
+    public void hideProgressBar() {
+        if(miActionProgressItem != null) {
+            // Hide progress item
+            miActionProgressItem.setVisible(false);
+        }
+    }
+
+    private void showMessageActivity(){
+        Intent i = new Intent(getApplicationContext(),MessageActivity.class);
+        startActivity(i);
+    }
+
+
 }
 
 

@@ -28,11 +28,13 @@ public class TwitterDBSaveService extends IntentService {
         Bundle bundle = intent.getBundleExtra("tweetsBundle");
 
         ArrayList<Tweet> tweetArrayList = bundle.getParcelableArrayList("tweets");
+        String tweetType = bundle.getParcelable("type");
         if(tweetArrayList != null && tweetArrayList.size() > 0){
             for (Tweet tweet: tweetArrayList) {
                 User user = tweet.getUser();
                 user.save();
                 tweet.setUser(user);
+                tweet.setType(tweetType);
                 tweet.save();
             }
         }

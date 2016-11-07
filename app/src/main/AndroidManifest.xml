@@ -48,10 +48,28 @@
             </intent-filter>
 
         </activity>
+
+        <activity android:name=".activities.ProfileActivity"
+            android:label="@string/tweet"
+            android:parentActivityName=".activities.TimeLineActivity"/>
+
         <activity android:name=".activities.TweetDetailActivity"
             android:label="@string/tweet"
             android:parentActivityName=".activities.TimeLineActivity" android:windowSoftInputMode="adjustPan"/>
-        <service
+
+        <activity android:name=".activities.FollowActivity"
+            android:label="@string/tweet"
+            android:parentActivityName=".activities.ProfileActivity"/>
+
+        <activity android:name=".activities.TweetSearchActivity"
+            android:label="@string/search_twitter"
+            android:parentActivityName=".activities.TimeLineActivity"/>
+
+        <activity android:name=".activities.MessageActivity"
+            android:label="@string/search_twitter"
+            android:parentActivityName=".activities.TimeLineActivity"/>
+
+       <service
             android:name=".service.TwitterDBSaveService"
             android:exported="false"/>
     </application>

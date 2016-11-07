@@ -3,8 +3,10 @@
         <color name="colorPrimary">#55ACEE</color>
         <color name="colorPrimaryDark">#1C6399</color>
         <color name="colorAccent">#55ACEE</color>
+        <color name="colorPink">#DD0EE6</color>
+        <color name="colorGreen">#19cf86</color>
         <color name="colorError">#FF0000</color>
-        <color name="transparent">#FFFFFF</color>
-        <color name="defaultText">#606060</color>
+        <color name="transparent">#77FFFFFF</color>
+        <color name="defaultText">#3F4649</color>
         <color name="screenNameColor">#AAB8C2</color>
 </resources>

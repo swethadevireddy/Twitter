@@ -82,7 +82,7 @@ public class TweetDetailActivity extends AppCompatActivity implements TweetDialo
             binding = DataBindingUtil.setContentView(this, R.layout.activity_tweet_detail);
 
             // Sets the Toolbar to act as the ActionBar for this Activity window.
-            setSupportActionBar(binding.toolbar);
+            setSupportActionBar(binding.tbInclude.toolbar);
 
             //to display home icon
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -98,18 +98,15 @@ public class TweetDetailActivity extends AppCompatActivity implements TweetDialo
             //bind tweet , ui can use it directly
             binding.setTweet(tweet);
             binding.setReplyTo("Reply to " + tweet.getUser().getName());
-            String screenName = tweet.getUser().getScreenName();
+            String screenName = "@" + tweet.getUser().getScreenName();
 
             //register listener on the click of reply tweet , to show charcount and tweet button
-            binding.etTweetReply.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    binding.linearLayoutTweetButton.setVisibility(View.VISIBLE);
-                    binding.etTweetReply.setText(screenName);
-                    getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE | WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
-                    binding.etTweetReply.setFocusableInTouchMode(true);
-                    binding.etTweetReply.setSelection(screenName.length());
-                }
+            binding.etTweetReply.setOnClickListener(v -> {
+                binding.linearLayoutTweetButton.setVisibility(View.VISIBLE);
+                binding.etTweetReply.setText(screenName);
+                getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE | WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+                binding.etTweetReply.setFocusableInTouchMode(true);
+                binding.etTweetReply.setSelection(screenName.length());
             });
 
             //register on text change listener to update charcount and disable button
@@ -157,6 +154,7 @@ public class TweetDetailActivity extends AppCompatActivity implements TweetDialo
             binding.setPresenter(presenter);
 
             client = TwitterApplication.getRestClient();
+            binding.setScreenName(screenName);
 
             if (tweet.getExtendedEntities() != null) {
                 List<Media> mediaList = tweet.getExtendedEntities().getMedia();
@@ -178,7 +176,6 @@ public class TweetDetailActivity extends AppCompatActivity implements TweetDialo
                         //Glide
                         Glide.with(binding.ivMediaImage.getContext()).load(m.getMediaUrl()).bitmapTransform(new RoundedCornersTransformation(binding.ivMediaImage.getContext(), 10, 0,
                                 RoundedCornersTransformation.CornerType.ALL)).into(binding.ivMediaImage);
-
                         break;
 
                     }
@@ -187,7 +184,6 @@ public class TweetDetailActivity extends AppCompatActivity implements TweetDialo
 
         }
     }
-
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -215,7 +211,7 @@ public class TweetDetailActivity extends AppCompatActivity implements TweetDialo
      */
     @Override
     public void tweet() {
-        if(InternetCheck.isOnline("api.twitter.com")) {
+        if(InternetCheck.isOnline()) {
             client.postTweet(new JsonHttpResponseHandler() {
                 @Override
                 public void onSuccess(int statusCode, Header[] headers, JSONObject response) {

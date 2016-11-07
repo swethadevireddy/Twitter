@@ -2,7 +2,6 @@ package com.codepath.twitter.fragments;
 
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
 import android.databinding.DataBindingUtil;
@@ -46,6 +45,11 @@ public class TweetDialogFragment extends DialogFragment  implements TweetDialogF
     AlertDialog alertDialog;
     SharedPreferences pref;
     private static final String SAVE_TWEET_NAME = "savedTweet";
+    String screenName;
+    Long replyTweetId = null;
+    String replyUserName;
+
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -62,11 +66,35 @@ public class TweetDialogFragment extends DialogFragment  implements TweetDialogF
 
 
     @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if(getArguments() != null){
+            screenName = getArguments().getString("screenName");
+            replyTweetId = getArguments().getLong("replyTweetId");
+            replyUserName = getArguments().getString("replyUserName");
+
+        }
+
+
+    }
+
+    public static TweetDialogFragment newInstance(String screenName, Long replyTweetId, String replyUserName){
+        TweetDialogFragment followFragment = new TweetDialogFragment();
+        Bundle args = new Bundle();
+        args.putString("screenName", screenName);
+        args.putLong("replyTweetId", replyTweetId);
+        args.putString("replyUserName", replyUserName);
+        followFragment.setArguments(args);
+        return followFragment;
+    }
+
+
+    @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
        // check if there is any saved draft
         pref = PreferenceManager.getDefaultSharedPreferences(getContext());
-        String savedTweet = pref.getString(SAVE_TWEET_NAME, "");
+        String savedTweet = pref.getString(SAVE_TWEET_NAME, (screenName == null)?"":"@"+screenName);
         //check if this is called from browser or any app to share
         sharedTweet = (sharedTweet == null)?savedTweet:sharedTweet;
 
@@ -75,6 +103,13 @@ public class TweetDialogFragment extends DialogFragment  implements TweetDialogF
             binding.etTweet.setText(sharedTweet);
             binding.etTweet.setSelection(sharedTweet.length());
             setTweetAttributes(sharedTweet);
+        }
+
+        //check if it is coming from reply event
+        if(replyTweetId != null){
+            binding.tvReply.setText(getString(R.string.in_reply) + " " + replyUserName);
+            binding.ivReply.setVisibility(View.VISIBLE);
+            binding.btnTweet.setText(getString(R.string.reply));
         }
 
 
@@ -125,11 +160,12 @@ public class TweetDialogFragment extends DialogFragment  implements TweetDialogF
      * to retrieve the profile
      */
     private void getProfileInfo(){
-        client.getProfileInfo(new JsonHttpResponseHandler(){
+        client.getProfileInfo(null, new JsonHttpResponseHandler(){
 
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 User loggedInUser = User.fromJSONObject(response);
+                binding.setScreenName("@"+loggedInUser.getScreenName());
                 //user model is used in the view directly
                 binding.setUser(loggedInUser);
             }
@@ -186,10 +222,8 @@ public class TweetDialogFragment extends DialogFragment  implements TweetDialogF
                 super.onFailure(statusCode, headers, throwable, errorResponse);
             }
 
-        }, binding.etTweet.getText().toString(), null);
+        }, binding.etTweet.getText().toString(), replyTweetId);
 
-
-        //Toast.makeText(this.getContext(),"on Submit", Toast.LENGTH_SHORT).show();
     }
 
     public void setTweet(String tweet){
@@ -220,25 +254,21 @@ public class TweetDialogFragment extends DialogFragment  implements TweetDialogF
         alertDialogBuilder
                 .setMessage("Save Draft? ")
                 .setCancelable(false)
-                .setPositiveButton("SAVE",new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog,int id) {
-                        // if this button is clicked, save the tweet and close the fragment
-                        // current activity
-                        SharedPreferences.Editor edit = pref.edit();
-                        edit.putString(SAVE_TWEET_NAME, binding.etTweet.getText()+"");
-                        edit.commit();
-                        dismiss();
-                        dialog.cancel();
+                .setPositiveButton("SAVE", (dialog, id) -> {
+                    // if this button is clicked, save the tweet and close the fragment
+                    // current activity
+                    SharedPreferences.Editor edit = pref.edit();
+                    edit.putString(SAVE_TWEET_NAME, binding.etTweet.getText()+"");
+                    edit.commit();
+                    dismiss();
+                    dialog.cancel();
 
-                    }
                 })
-                .setNegativeButton("DELETE",new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog,int id) {
-                        // if this button is clicked, just close
-                        // the dialog box and do nothing
-                        dialog.cancel();
-                        dismiss();
-                    }
+                .setNegativeButton("DELETE", (dialog, id) -> {
+                    // if this button is clicked, just close
+                    // the dialog box and do nothing
+                    dialog.cancel();
+                    dismiss();
                 });
 
         // create alert dialog

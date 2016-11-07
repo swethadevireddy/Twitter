@@ -4,7 +4,8 @@ import android.databinding.BindingAdapter;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
-import com.codepath.twitter.R;
+
+import jp.wasabeef.glide.transformations.RoundedCornersTransformation;
 
 /**
  * Created by sdevired on 10/29/16.
@@ -16,8 +17,9 @@ public class CustomBindingAdapter {
         imageView.setBackgroundResource(android.R.color.transparent);
         Glide.with(imageView.getContext())
                 .load(url)
-                .placeholder(R.mipmap.default_profile)
-                .into(imageView);
+                .bitmapTransform(new RoundedCornersTransformation(imageView.getContext(), 10, 0,
+                RoundedCornersTransformation.CornerType.ALL)).into(imageView);
+
     }
 
 }

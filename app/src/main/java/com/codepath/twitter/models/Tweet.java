@@ -11,6 +11,7 @@ import com.raizlabs.android.dbflow.annotation.Column;
 import com.raizlabs.android.dbflow.annotation.ForeignKey;
 import com.raizlabs.android.dbflow.annotation.PrimaryKey;
 import com.raizlabs.android.dbflow.annotation.Table;
+import com.raizlabs.android.dbflow.sql.language.Condition;
 import com.raizlabs.android.dbflow.sql.language.OrderBy;
 import com.raizlabs.android.dbflow.sql.language.Select;
 import com.raizlabs.android.dbflow.structure.BaseModel;
@@ -55,6 +56,18 @@ public class Tweet extends BaseModel implements Parcelable {
     @ForeignKey(saveForeignKeyModel = false)
     User user;
 
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    @Column(name = "type")
+    private String type;
+
+
 
     public Entities getEntities() {
         return entities;
@@ -80,6 +93,58 @@ public class Tweet extends BaseModel implements Parcelable {
     @SerializedName("extended_entities")
     @Expose
     ExtendEntities extendedEntities;
+
+    public boolean isRetweeted() {
+        return retweeted;
+    }
+
+    public void setRetweeted(boolean retweeted) {
+        this.retweeted = retweeted;
+    }
+
+    public Long getReTweetCount() {
+        return reTweetCount;
+    }
+
+    public void setReTweetCount(Long reTweetCount) {
+        this.reTweetCount = reTweetCount;
+    }
+
+    public boolean isFavorited() {
+        return favorited;
+    }
+
+    public void setFavorited(boolean favorited) {
+        this.favorited = favorited;
+    }
+
+    public Long getFavoriteCount() {
+        return favoriteCount;
+    }
+
+    public void setFavoriteCount(Long favoriteCount) {
+        this.favoriteCount = favoriteCount;
+    }
+
+    @SerializedName("retweeted")
+    @Expose
+    @Column(name = "isReTweeted")
+    private boolean retweeted=false;
+
+    @SerializedName("retweet_count")
+    @Expose
+    @Column(name = "reTweetCount")
+    private Long reTweetCount;
+
+    @SerializedName("favorited")
+    @Expose
+    @Column(name = "favorited")
+    private boolean favorited =false;
+
+    @SerializedName("favorite_count")
+    @Expose
+    @Column(name = "favoriteCount")
+    private Long favoriteCount;
 
 
 
@@ -120,6 +185,7 @@ public class Tweet extends BaseModel implements Parcelable {
     public User getUser() {
         return user;
     }
+
 
 
 
@@ -164,10 +230,12 @@ public class Tweet extends BaseModel implements Parcelable {
      * @param page
      * @return
      */
-    public static ArrayList<Tweet> getTweets(int page){
+    public static ArrayList<Tweet> getTweets(int page, String type){
         int limit = 25;
+        Condition condition = Condition.column(Tweet_Table.type.getNameAlias()).eq(type);
         List<Tweet> tweets = new Select()
                 .from(Tweet.class)
+                .where(condition)
                 .orderBy(OrderBy.fromProperty(Tweet_Table.createdAt).descending())
                 .offset(limit * page)
                 .limit(limit)
@@ -178,6 +246,9 @@ public class Tweet extends BaseModel implements Parcelable {
     public Tweet() {
     }
 
+
+    public static String HOME_TIMELINE = "home";
+    public static String MENTION_TIMELINE = "mentions";
 
     @Override
     public int describeContents() {
@@ -190,8 +261,11 @@ public class Tweet extends BaseModel implements Parcelable {
         dest.writeString(this.text);
         dest.writeLong(this.createdAt != null ? this.createdAt.getTime() : -1);
         dest.writeParcelable(this.user, flags);
-        dest.writeParcelable(this.entities, flags);
-        dest.writeParcelable(this.extendedEntities, flags);
+        dest.writeString(this.type);
+        dest.writeByte(this.retweeted ? (byte) 1 : (byte) 0);
+        dest.writeValue(this.reTweetCount);
+        dest.writeByte(this.favorited ? (byte) 1 : (byte) 0);
+        dest.writeValue(this.favoriteCount);
         dest.writeString(this.relativeTime);
     }
 
@@ -201,8 +275,11 @@ public class Tweet extends BaseModel implements Parcelable {
         long tmpCreatedAt = in.readLong();
         this.createdAt = tmpCreatedAt == -1 ? null : new Date(tmpCreatedAt);
         this.user = in.readParcelable(User.class.getClassLoader());
-        this.entities = in.readParcelable(Entities.class.getClassLoader());
-        this.extendedEntities = in.readParcelable(ExtendEntities.class.getClassLoader());
+        this.type = in.readString();
+        this.retweeted = in.readByte() != 0;
+        this.reTweetCount = (Long) in.readValue(Long.class.getClassLoader());
+        this.favorited = in.readByte() != 0;
+        this.favoriteCount = (Long) in.readValue(Long.class.getClassLoader());
         this.relativeTime = in.readString();
     }
 

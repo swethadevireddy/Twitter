@@ -15,11 +15,12 @@ import java.util.ArrayList;
  */
 public class TwitterDBUtil {
 
-    public static void storeTweets(Context context, ArrayList<Tweet> tweets){
+    public static void storeTweets(Context context, ArrayList<Tweet> tweets, String type){
         Intent i = new Intent(context, TwitterDBSaveService.class);
         Bundle bundle = new Bundle();
         bundle.putParcelableArrayList("tweets", tweets);
         i.putExtra("tweetsBundle", bundle);
+        i.putExtra("type", type);
         context.startService(i);
     }
 

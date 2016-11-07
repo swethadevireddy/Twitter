@@ -3,6 +3,8 @@
     <data>
           <variable name="presenter" type="com.codepath.twitter.databinding.TweetDialogFragmentPresenter"/>
           <variable name="user" type="com.codepath.twitter.models.User"/>
+          <variable name="screenName" type="java.lang.String"/>
+
     </data>
 
     <RelativeLayout
@@ -58,17 +60,56 @@
          android:layout_marginRight="5dp"
          android:layout_marginTop="2dp" />
 
-    <EditText
+     <ImageView
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+         android:layout_alignParentLeft="true"
+         android:layout_alignParentStart="true"
+         android:layout_marginTop="10dp"
+         android:layout_below="@id/tvScreenName"
+         android:id="@+id/ivReply"
+         android:src="@drawable/arrow_down"
+         android:tint="@color/screenNameColor"
+         android:visibility="gone"
+     />
+
+     <TextView
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+         android:layout_toRightOf="@id/ivReply"
+         android:gravity="start"
+         android:id="@+id/tvReply"
+         android:layout_marginTop="10dp"
+         android:layout_below="@id/tvScreenName"
+         android:textColor="@color/screenNameColor"
+         android:layout_marginLeft="10dp"
+         />
+
+      <EditText
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textMultiLine"
+            android:id="@+id/etMessageTo"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_marginTop="5dp"
+            android:hint="@string/message_to"
+            android:visibility="gone"
+            android:layout_below="@id/ivReply"
+            android:gravity="start"
+            android:layout_marginLeft="10dp"/>
+
+        <EditText
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:inputType="textMultiLine"
         android:id="@+id/etTweet"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_marginTop="5dp"
+        android:layout_marginTop="10dp"
         android:hint="@string/hint_compose"
         android:lines="5"
-        android:layout_below="@id/ivTweetProfileImage"
+        android:layout_below="@id/etMessageTo"
         android:gravity="start"
         android:layout_marginLeft="10dp"/>
 

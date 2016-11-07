@@ -1,11 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/miSearch"
+        android:icon="@drawable/ic_search"
+        android:orderInCategory="4"
+        app:showAsAction="always"
+        android:title="@string/search_twitter"
+        app:actionViewClass="android.support.v7.widget.SearchView"
+        />
+
+
+    <item android:id="@+id/miProfile"
+        android:icon="@drawable/ic_profile"
+        android:orderInCategory="5"
+        app:showAsAction="always"
+        android:title="@string/profile"/>
+
+    <item
+        android:id="@+id/miMesssage"
+        android:icon="@drawable/ic_message"
+        android:orderInCategory="6"
+        app:showAsAction="always"
+        android:title="@string/message"/>
+
     <item
         android:id="@+id/miTweet"
-        android:icon="@mipmap/tweet"
-        app:showAsAction="ifRoom|withText"
-        android:title="Tweet">
-    </item>
+        android:icon="@drawable/ic_compose"
+        android:orderInCategory="7"
+        app:showAsAction="always"
+        android:title="@string/tweet"/>
+
+     <item
+        android:id="@+id/miActionProgress"
+        android:title="Loading..."
+        android:orderInCategory="10"
+        app:showAsAction="ifRoom"
+        android:visible="false"
+        app:actionLayout="@layout/action_view_progress" />
+
+
 
 </menu>

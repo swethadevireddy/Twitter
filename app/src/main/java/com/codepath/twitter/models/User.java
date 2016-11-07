@@ -43,6 +43,58 @@ public class User extends BaseModel implements Parcelable{
     @Expose
     String screenName;
 
+    public String getFollowersCount() {
+        return followersCount;
+    }
+
+    public void setFollowersCount(String followersCount) {
+        this.followersCount = followersCount;
+    }
+
+    @SerializedName("followers_count")
+    @Expose
+    String followersCount;
+
+    @SerializedName("description")
+    @Expose
+    String tagLine;
+
+    public void setFriendsCount(String friendsCount) {
+        this.friendsCount = friendsCount;
+    }
+
+    public String getTagLine() {
+        return tagLine;
+    }
+
+    public void setTagLine(String tagLine) {
+        this.tagLine = tagLine;
+    }
+
+    public String getProfileBackgroundUrl() {
+        return profileBackgroundUrl;
+    }
+
+    public void setProfileBackgroundUrl(String profileBackgroundUrl) {
+        this.profileBackgroundUrl = profileBackgroundUrl;
+    }
+
+    @SerializedName("profile_banner_url")
+    @Expose
+    String profileBackgroundUrl;
+
+    public String getFriendsCount() {
+        return friendsCount;
+    }
+
+
+
+    @SerializedName("friends_count")
+    @Expose
+    private String friendsCount;
+
+
+
 
     public String getName() {
         return name;
@@ -104,6 +156,7 @@ public class User extends BaseModel implements Parcelable{
         dest.writeLong(this.id);
         dest.writeString(this.profileImageUrl);
         dest.writeString(this.screenName);
+        dest.writeString(this.followersCount);
     }
 
     public User() {
@@ -114,6 +167,7 @@ public class User extends BaseModel implements Parcelable{
         this.id = in.readLong();
         this.profileImageUrl = in.readString();
         this.screenName = in.readString();
+        this.followersCount = in.readString();
     }
 
     public static final Creator<User> CREATOR = new Creator<User>() {
